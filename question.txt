@@ -1,0 +1,130 @@
+1.Symbol v/s String
+-------------------
+Symbol are immutable ,once you created, it can never be changed
+Strings are mutable ,after creation ,you add to or remove from the string
+
+2.Exceptions
+------------
+Ruby provide a nice mechanism to handle exceptions. We enclose the code
+that could raise an exception in a begin/end block and use rescue clauses
+to tell Ruby the types of exceptions we want to handle.
+buit-in exceptions
+------------------
+irb(main):059:1* begin
+irb(main):060:1*   f = File.open("xyz.txt")
+irb(main):061:1* rescue => e
+irb(main):062:1*   puts e
+irb(main):063:0> end
+No such file or directory @ rb_sysopen - xyz.txt  :-"its a built-in exception"
+=> nil
+irb(main):064:1* begin
+irb(main):065:1*   f = 1/"x"
+irb(main):066:1* rescue Exception => e
+irb(main):067:1*   puts e
+irb(main):068:0> end
+String can't be coerced into Integer
+=> nil
+irb(main):069:0>
+
+3.Custom Exceptions
+-------------------
+Creating our own exceptions, Its called custom exceptions
+  eg:
+  class MyError < StandardError
+    attr_reader :msg_text
+    def initialize(msg)
+      @msg_text = "My default message"
+      super(msg)
+    end
+  end
+  begin
+    x = 1
+    raise MyError ,"my error" unless x == 0
+    # raise MyError.new("my error1")
+    # raise "error msg"
+  rescue =>e
+     puts e
+     puts e.msg_text
+  end
+output:
+-------
+my error
+My default message
+
+4.Sigleton method
+---------------------------
+This methods are defined for a specific object only, it works for a single object
+in ruby everything is object so we can use Singleton method everywhere
+eg:
+
+irb(main):079:0> txt = "this is an exsample of singleton method"
+=> "this is an exsample of singleton method"
+irb(main):080:1* def txt.caps
+irb(main):081:1*   self.upcase
+irb(main):082:0> end
+=> :caps
+irb(main):083:0> txt.caps
+=> "THIS IS AN EXSAMPLE OF SINGLETON METHOD"
+
+5.Include vs Extend
+-------------------
+both are used to import module to a class. Include import method as instance
+method and extend import method as class methods
+eg:
+module Sample
+   def display
+      puts "hello"
+   end
+end
+module Sample1
+   def display1
+      puts "world"
+   end
+end
+class Show
+   include Sample
+   extend Sample1
+end
+output:
+-------
+irb(main):019:0> Show.new.display //instance method
+hello
+=> nil
+irb(main):021:0> Show.display1 //class methods
+world
+=> nil
+
+6.Dynamically call a method
+---------------------------
+Calling a method on runtime
+
+eg:
+class MyClass
+  def self.dynamically_define(name)
+    define_method(name) do |txt|
+      puts "this #{name} method was defined for you ! #{txt}"
+    end
+  end
+  def method1(txt)
+    puts "method1:- #{txt}"
+  end
+  def method2(txt)
+    puts "method2:- #{txt}"
+  end
+  def method3(txt)
+    puts "method3:- #{txt}"
+  end
+end
+
+puts "Enter your method:"
+method_name = gets.strip.to_sym
+puts "Enter a message"
+msg = gets
+
+my_obj = MyClass.new
+
+unless my_obj.respond_to?(method_name,true)
+  MyClass.dynamically_define(method_name)
+end
+
+my_obj.send(method_name,msg)
